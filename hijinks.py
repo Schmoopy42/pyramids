@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from random import randint
+import numpy as np
 
 winner = ''
 
@@ -8,10 +9,16 @@ board = [[ [], [], [] ],
     [ [3,2,1], [3,2,1], [3,2,1] ],
     [ [], [], [] ]]
 
-def show_board(board):
-    print()
-    for x in board:
-        print(x)
+def show_board(board, player=1):
+    print()             # print empty line to make it more readable
+    if player == 1:
+        for x in reversed(board):
+            for i in reversed(x):
+                print(i, end='')
+            print()
+    else:
+        for x in board:
+            print(x)
 
 def dice_roll():
     return randint(1,3)
@@ -49,6 +56,10 @@ def move_pyramids(from_x, from_y, quantity, direction):
 
 def parse_command(command):
     pass
+
+move_pyramids(1, 0, 1, "down")
+show_board(board)
+show_board(board, 2)
 
 while winner == '':
     num_of_moves = dice_roll()
