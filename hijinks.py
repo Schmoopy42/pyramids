@@ -9,9 +9,9 @@ board = [[ [], [], [] ],
     [ [3,2,1], [3,2,1], [3,2,1] ],
     [ [], [], [] ]]
 
-def show_board(board, player=1):
+def show_board(board=board, player=1):
     print()             # print empty line to make it more readable
-    if player == 1:
+    if player == 2:
         for x in reversed(board):
             for i in reversed(x):
                 print(i, end='')
@@ -57,8 +57,9 @@ def move_pyramids(from_x, from_y, quantity, direction):
 def parse_command(command):
     pass
 
-move_pyramids(1, 0, 1, "down")
-show_board(board)
+show_board()
+move_pyramids(1, 2, 1, "up")
+show_board()
 show_board(board, 2)
 
 while winner == '':
