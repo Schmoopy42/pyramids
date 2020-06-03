@@ -104,12 +104,14 @@ def run():
     move_pyramids(1,1,1,'up', player)
     while winner == None:
         print("Player {}'s turn".format(player))
-        num_of_moves = dice_roll()
-        print("You rolled a " + str(num_of_moves) + " so you can move " + str(num_of_moves) + " times.")
-        show_board(board, player)
-
-        parse_command(input("> "))
-        winner=check_for_winner(board)
+        num_moves_left = dice_roll()
+        print("You rolled a " + str(num_moves_left) + " so you can move " + str(num_moves_left) + " times.")
+        while num_moves_left > 0:
+            show_board(board, player)
+            print(str(num_moves_left) + " moves remaining")
+            parse_command(input("> "))
+            winner=check_for_winner(board)
+            num_moves_left -= 1
         player = other_player(player)
     
     print("Congratulations, player {} is the winner".format(winner))
