@@ -23,18 +23,17 @@ def show_board(board=board, player=1):
 def dice_roll():
     return randint(1,3)
 
-def move_pyramids(from_x, from_y, quantity, direction):
+def move_pyramids(from_x, from_y, quantity, direction, player):
     ''' Some important rules
         - You can't move a pyramid on top of a smaller pyramid
         - You can't move a pyramid FROM your opponent's homerow 
     '''
-    _possible_directions = ['up','down','left','right']
 
     _fromspace = board[from_x][from_y]
     to_x = from_x
     to_y = from_y
 
-    if direction not in _possible_directions:
+    if direction not in ['up','down','left','right']:
         print("Not a valid direction.")
     else:
         if direction == "up":
@@ -46,8 +45,29 @@ def move_pyramids(from_x, from_y, quantity, direction):
         elif direction == "right":
             to_y += 1
 
-    
-    if ( 0 <= to_x <= 2 ) and ( 0 <= to_y <= 2 ):   # Make sure destination is on board
+    def able_to_move_pieces():
+        # Make sure you aren't trying to move more pieces that are in that space
+        if quantity > len(_fromspace):
+            print("You can't move {} pieces from that space".format(quantity))
+            return False
+        # Not allowed to move pieces from your oppoent's homerow
+        fromspace_in_opponents_homerow = True if (player == 1 and from_x == 0) or (player == 2 and from_x == 2) else False
+        if fromspace_in_opponents_homerow:
+            print("Can't move pieces from opponent's homerow")
+            return False
+        destination_on_board = True if ( 0 <= to_x <= 2 ) and ( 0 <= to_y <= 2 ) else False
+        if not destination_on_board:
+            print("Have to move to a valid space")
+            return False
+        # bottom piece to move not bigger than top piece of desination
+        destination_empty = True if len(board[to_x][to_y]) == 0 else False
+        if not destination_empty:
+            if board[from_x][from_y][-quantity] > board[to_x][to_y][-1]:
+                print("Can't move a piece on top of a smaller piece")
+                return False
+        return True
+
+    if able_to_move_pieces():
         # Move the pieces
         _tospace = board[to_x][to_y]
         pieces_to_move = []
@@ -81,7 +101,7 @@ def other_player(player):
 def run():
     winner = None
     player = 1
-    move_pyramids(1,2,3,'down')
+    move_pyramids(1,1,1,'up', player)
     while winner == None:
         print("Player {}'s turn".format(player))
         num_of_moves = dice_roll()
