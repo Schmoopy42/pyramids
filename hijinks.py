@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 from random import randint
-import numpy as np
-
-winner = ''
 
 # setup board
-board = [[ [], [], [] ],
-    [ [3,2,1], [3,2,1], [3,2,1] ],
+#board = [[ [], [], [] ],
+#    [ [3,2,1], [3,2,1], [3,2,1] ],
+#    [ [], [], [] ]]
+board = [[ [3,2,1], [3,2,1], [3,2,1] ],
+    [ [], [], [] ],
     [ [], [], [] ]]
 
 def show_board(board=board, player=1):
@@ -57,26 +57,41 @@ def move_pyramids(from_x, from_y, quantity, direction):
 def parse_command(command):
     pass
 
-show_board()
-move_pyramids(1, 2, 1, "up")
-show_board()
-show_board(board, 2)
+def check_for_winner(board):
+    player_homerow = [board[0], board[-1]]
 
-while winner == '':
-    num_of_moves = dice_roll()
-    print("You rolled a " + str(num_of_moves) + " so you can move " + str(num_of_moves) + " times.")
-    show_board(board)
+    for player_index, homerow in enumerate(player_homerow):
+        player = player_index + 1
 
-    # spot_x = int(input("spot x"))
-    # spot_y = int(input("spot y"))
-    # quantity = int(input("quantity"))
-    # direction = input("direction")
-    # move_pyramids(spot_x, spot_y, quantity, direction)
+        all3_spaces_same = True if homerow[0] == homerow[1] == homerow[2] else False
 
-    command = input("> ")
-    parse_command(command)
+        if len(homerow[0]) == 1 and all3_spaces_same:
+            return player
+        elif homerow == [[3,2,1], [3,2,1], [3,2,1]]:
+            return other_player(player)
 
 
+def other_player(player):
+    return 1 if player == 2 else 2
+
+def run():
+    winner = None
+    player = 1
+    # move_pyramids(1,2,1,'down')
+    while winner == None:
+        print("player is " + str(player))
+        num_of_moves = dice_roll()
+        print("You rolled a " + str(num_of_moves) + " so you can move " + str(num_of_moves) + " times.")
+        show_board(board, player)
+
+        parse_command(input("> "))
+        winner=check_for_winner(board)
+        player = other_player(player)
+    
+    print("Congratulations, player {} is the winner".format(winner))
+
+if __name__ == "__main__":
+    run()
 
 
 
