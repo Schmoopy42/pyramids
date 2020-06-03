@@ -2,12 +2,12 @@
 from random import randint
 
 # setup board
-#board = [[ [], [], [] ],
-#    [ [3,2,1], [3,2,1], [3,2,1] ],
-#    [ [], [], [] ]]
-board = [[ [3,2,1], [3,2,1], [3,2,1] ],
-    [ [], [], [] ],
+board = [[ [], [], [] ],
+    [ [3,2,1], [3,2,1], [3,2,1] ],
     [ [], [], [] ]]
+# board = [[ [3,2,1], [3,2,1], [3,2,1] ],
+#     [ [], [], [] ],
+#     [ [], [], [] ]]
 
 def show_board(board=board, player=1):
     print()             # print empty line to make it more readable
@@ -46,11 +46,15 @@ def move_pyramids(from_x, from_y, quantity, direction):
         elif direction == "right":
             to_y += 1
 
-    # check to make sure no values are negative
-    if ( 0 <= to_x <= 2 ) and ( 0 <= to_y <= 2 ):
+    
+    if ( 0 <= to_x <= 2 ) and ( 0 <= to_y <= 2 ):   # Make sure destination is on board
+        # Move the pieces
         _tospace = board[to_x][to_y]
-        _pyramid = _fromspace.pop()
-        _tospace.append(_pyramid)
+        pieces_to_move = []
+        for piece in range(quantity):               # put pieces in stack
+            pieces_to_move.append(_fromspace.pop())
+        for piece in range(quantity):               # pop them out of the stack to new space
+            _tospace.append(pieces_to_move.pop())
     else:
         print("Can't move that way.")
 
@@ -77,9 +81,9 @@ def other_player(player):
 def run():
     winner = None
     player = 1
-    # move_pyramids(1,2,1,'down')
+    move_pyramids(1,2,3,'down')
     while winner == None:
-        print("player is " + str(player))
+        print("Player {}'s turn".format(player))
         num_of_moves = dice_roll()
         print("You rolled a " + str(num_of_moves) + " so you can move " + str(num_of_moves) + " times.")
         show_board(board, player)
