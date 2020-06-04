@@ -79,7 +79,9 @@ def move_pyramids(from_x, from_y, quantity, direction, player):
         print("Can't move that way.")
 
 def parse_command(command):
-    pass
+    # todo: check if command fits format
+    x, y, quantity, direction = command.split()
+    return {'x': int(x), 'y': int(y), 'quantity': int(quantity), 'direction': direction}
 
 def check_for_winner(board):
     player_homerow = [board[0], board[-1]]
@@ -101,7 +103,7 @@ def other_player(player):
 def run():
     winner = None
     player = 1
-    move_pyramids(1,1,1,'up', player)
+    # move_pyramids(1,1,1,'up', player)
     while winner == None:
         print("Player {}'s turn".format(player))
         num_moves_left = dice_roll()
@@ -109,7 +111,9 @@ def run():
         while num_moves_left > 0:
             show_board(board, player)
             print(str(num_moves_left) + " moves remaining")
-            parse_command(input("> "))
+            move = parse_command(input("> "))
+            move_pyramids(move['x'], move['y'], move['quantity'], move['direction'], player)
+
             winner=check_for_winner(board)
             num_moves_left -= 1
         player = other_player(player)
