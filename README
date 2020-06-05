@@ -1,1 +1,5 @@
 The goal of this project for me is to strengthen my understanding of object-oriented concepts by trying to create various games from Pyramid Arcade (made by Looney Labs) using Python.
+
+Currently working on hijinks - original Looney Labs game here: https://www.looneylabs.com/games/pink-hijinks
+
+Eventually, I'd like to make some general libraries with the pieces and components that are used in various Pyramid Arcade games: https://www.looneylabs.com/games/pyramid-arcade
