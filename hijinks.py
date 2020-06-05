@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 from random import randint
 
+starting_player = 1
+board_length = 3
 # setup board
 board = [[ [], [], [] ],
     [ [3,2,1], [3,2,1], [3,2,1] ],
@@ -21,7 +23,9 @@ def show_board(board=board, player=1):
             print(x)
 
 def dice_roll():
-    return randint(1,3)
+    roll = randint(1,3)
+    print("You rolled a " + str(roll))
+    return roll
 
 def move_pyramids(from_x, from_y, quantity, direction, player):
     ''' Some important rules
@@ -33,17 +37,14 @@ def move_pyramids(from_x, from_y, quantity, direction, player):
     to_x = from_x
     to_y = from_y
 
-    if direction not in ['up','down','left','right']:
-        print("Not a valid direction.")
-    else:
-        if direction == "up":
-            to_x -= 1
-        elif direction == "down":
-            to_x += 1
-        elif direction == "left":
-            to_y -= 1
-        elif direction == "right":
-            to_y += 1
+    if direction == "up":
+        to_x -= 1
+    elif direction == "down":
+        to_x += 1
+    elif direction == "left":
+        to_y -= 1
+    elif direction == "right":
+        to_y += 1
 
     def able_to_move_pieces():
         # Make sure you aren't trying to move more pieces that are in that space
@@ -75,54 +76,84 @@ def move_pyramids(from_x, from_y, quantity, direction, player):
             pieces_to_move.append(_fromspace.pop())
         for piece in range(quantity):               # pop them out of the stack to new space
             _tospace.append(pieces_to_move.pop())
+        return 'moved'
     else:
         print("Can't move that way.")
+        return 'not moved'
 
-def parse_command(command):
-    # todo: check if command fits format
-    x, y, quantity, direction = command.split()
-    return {'x': int(x), 'y': int(y), 'quantity': int(quantity), 'direction': direction}
+def convert_values_to_int(values):
+    # convert each value in array to int
+    pass
+
+def is_valid_move(x, y, quantity, direction, num_moves_left):
+
+    # quantity can't be more than moves left
+    if quantity > num_moves_left:
+        return False
+    # x and y can't be out of bounds
+    elif not 0 <= x <= board_length or not 0 <= y <= board_length:
+        return False
+    # direction has to be defined
+    elif direction not in ['up','down','left','right']:
+        print("Not a valid direction.")
+        return False
+    else:
+        return True
+
+def end_game(winner):
+    print("Congratulations, player {} is the winner".format(winner))
+    exit()
 
 def check_for_winner(board):
-    player_homerow = [board[0], board[-1]]
+    winner = None
+    player_homerows = [board[-1], board[0]]
 
-    for player_index, homerow in enumerate(player_homerow):
+    for player_index, homerow in enumerate(player_homerows):
         player = player_index + 1
 
         all3_spaces_same = True if homerow[0] == homerow[1] == homerow[2] else False
 
         if len(homerow[0]) == 1 and all3_spaces_same:
-            return player
+            winner = player
         elif homerow == [[3,2,1], [3,2,1], [3,2,1]]:
-            return other_player(player)
+            winner = other_player(player)
+
+    if winner != None:
+        end_game(winner)
+
+
+def do_players_moves(player, num_moves_left):
+
+    command = input("You have {} moves left.\nYour move > ".format(num_moves_left))
+    # check if command fits format
+    x, y, quantity, direction = command.split()
+    x = int(x)
+    y = int(y)
+    quantity = int(quantity)        # use convert_values_to_int function
+    move = (x, y, quantity, direction)
+
+    if is_valid_move(x, y, quantity, direction, num_moves_left):
+        move_status = move_pyramids(x, y, quantity, direction, player)
+        check_for_winner(board)
+        if move_status == 'moved':
+            show_board(board)
+            num_moves_left -= quantity
+
+    if num_moves_left > 0:
+        do_players_moves(player, num_moves_left)
 
 
 def other_player(player):
     return 1 if player == 2 else 2
 
-def run():
-    winner = None
-    player = 1
-    # move_pyramids(1,1,1,'up', player)
-    while winner == None:
+def play_game():
+    player = starting_player
+    show_board(board)
+    while True:
         print("Player {}'s turn".format(player))
         num_moves_left = dice_roll()
-        print("You rolled a " + str(num_moves_left) + " so you can move " + str(num_moves_left) + " times.")
-        while num_moves_left > 0:
-            show_board(board, player)
-            print(str(num_moves_left) + " moves remaining")
-            move = parse_command(input("> "))
-            move_pyramids(move['x'], move['y'], move['quantity'], move['direction'], player)
-
-            winner=check_for_winner(board)
-            num_moves_left -= 1
+        do_players_moves(player, num_moves_left)
         player = other_player(player)
-    
-    print("Congratulations, player {} is the winner".format(winner))
 
 if __name__ == "__main__":
-    run()
-
-
-
-
+    play_game()
