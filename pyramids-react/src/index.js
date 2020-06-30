@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 function Square(props) {
-  return(
+  return (
     <button
       className="square"
       onClick={props.onClick}
@@ -15,11 +15,11 @@ function Square(props) {
 
 class Board extends React.Component {
 
-  renderSquare(i) {
+  renderSquare(y, x) {
     return (
       <Square
-        value={i}
-        onClick={() => this.props.onClick()}
+        value={this.props.squares[y][x]}
+        onClick={() => this.props.onClick(y, x)}
       />
     );
   }
@@ -28,24 +28,23 @@ class Board extends React.Component {
     return (
       <div>
         <div className="board-row">
-          {this.renderSquare(this.props.squares[0][0])}
-          {this.renderSquare(this.props.squares[0][1])}
-          {this.renderSquare(this.props.squares[0][2])}
+          {this.renderSquare(0, 0)}
+          {this.renderSquare(0, 1)}
+          {this.renderSquare(0, 2)}
         </div>
         <div className="board-row">
-          {this.renderSquare(this.props.squares[1][0])}
-          {this.renderSquare(this.props.squares[1][1])}
-          {this.renderSquare(this.props.squares[1][2])}
+          {this.renderSquare(1, 0)}
+          {this.renderSquare(1, 1)}
+          {this.renderSquare(1, 2)}
         </div>
         <div className="board-row">
-          {this.renderSquare(this.props.squares[2][0])}
-          {this.renderSquare(this.props.squares[2][1])}
-          {this.renderSquare(this.props.squares[2][2])}
+          {this.renderSquare(2, 0)}
+          {this.renderSquare(2, 1)}
+          {this.renderSquare(2, 2)}
         </div>
       </div>
     );
   }
-
 }
 
 class Game extends React.Component {
@@ -62,17 +61,21 @@ class Game extends React.Component {
     };
   }
 
-  handleClick() {
-    /*  this will be used to select and move
-        pieces
-    */
-    this.setState({pyramidsPickedUp: [2]});
+
+  // pick up and move pieces
+  handleClick(y, x) {
+    let currentPickedUp = this.state.pyramidsPickedUp;
+    currentPickedUp.push(this.state.squares[y][x].pop());
+
+    this.setState({
+      pyramidsPickedUp: currentPickedUp,
+    });
   }
 
   render() {
     return <Board 
       squares={this.state.squares}
-      onClick={() => this.handleClick()}
+      onClick={(y, x) => this.handleClick(y, x)}
     />
   }
 }
