@@ -52,9 +52,9 @@ class Game extends React.Component {
     super(props);
     this.state = {
       squares: [
-        [[null], [null], [null]],
+        [[], [], []],
         [[3,2,1], [3,2,1], [3,2,1]],
-        [[null], [null], [null]],
+        [[], [], []],
       ],
       p1isNext: true,
       pyramidsPickedUp: [],
@@ -64,6 +64,9 @@ class Game extends React.Component {
 
   // pick up and move pieces
   handleClick(y, x) {
+    if (this.state.squares[y][x].length === 0 ) {
+      return;
+    }
     let currentPickedUp = this.state.pyramidsPickedUp;
     currentPickedUp.push(this.state.squares[y][x].pop());
 
