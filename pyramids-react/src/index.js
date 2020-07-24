@@ -58,20 +58,48 @@ class Game extends React.Component {
       ],
       p1isNext: true,
       pyramidsPickedUp: [],
+      firstClick: true,
     };
   }
 
+  grabPiece(y, x) {
+    let currentPickedUp = this.state.pyramidsPickedUp;
+    currentPickedUp.push(this.state.squares[y][x].pop());
+    this.setState({
+      pyramidsPickedUp: currentPickedUp,
+    });
+  }
 
   // pick up and move pieces
   handleClick(y, x) {
-    if (this.state.squares[y][x].length === 0 ) {
+/*  if (this.state.squares[y][x].length === 0 ) {
       return;
+    } */
+    if (this.state.firstClick) {
+      this.setState({
+        fromSquare: {
+          "y": y,
+          "x": x,
+        },
+      });
+      this.grabPiece(y, x);
+    } else if (! this.state.firstClick) {   // if not first click
+      // check if they clicked on the same square as first click
+      if (y === this.state.fromSquare.y && x === this.state.fromSquare.x ) {
+        // if so, pick it up
+        this.grabPiece(y, x);
+      } else {
+        // if not, it's the toSquare
+        console.log("move pyramids");
+      }
     }
-    let currentPickedUp = this.state.pyramidsPickedUp;
-    currentPickedUp.push(this.state.squares[y][x].pop());
 
     this.setState({
-      pyramidsPickedUp: currentPickedUp,
+      playerLastClicked: {
+        "y": y,
+        "x": x,
+      },
+      firstClick: false,
     });
   }
 
