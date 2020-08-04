@@ -13,12 +13,6 @@ function Square(props) {
   );
 }
 
-function StatusBoard(props) {
-  return (
-    <h3>{props.player} has {props.movesLeft} moves left</h3>
-  );
-}
-
 class Board extends React.Component {
 
   renderSquare(y, x) {
@@ -62,10 +56,10 @@ class Game extends React.Component {
         [[3,2,1], [3,2,1], [3,2,1]],
         [[], [], []],
       ],
-      p1isNext: true,
+      whoseTurn: "player1",
       pyramidsPickedUp: [],
       firstClick: true,
-      movesLeft: 3,
+      dieRoll: this.rollPyramidDie(),
     };
   }
 
@@ -85,19 +79,14 @@ class Game extends React.Component {
         break;
       case 1:
         return [1];
-        break;
       case 2:
         return [2];
-        break;
       case 3:
         return [3];
-        break;
       case 4:
         return [1, 2];
-        break;
       case 5:
         return [1, 3];
-        break;
       case 6:
         return [2, 3];
     }
@@ -159,12 +148,25 @@ class Game extends React.Component {
     });
   }
 
+  endTurn(){
+    // Change turn to other player
+    let nextPlayer;
+    if (this.state.whoseTurn === "player1") {
+      nextPlayer = "player2";
+    } else {
+      nextPlayer = "player1";
+    }
+    this.setState({
+      whoseTurn: nextPlayer,
+    });
+  }
+
   render() {
     return(
       <div>
         <StatusBoard 
-          player={this.state.p1IsNext ? "Player 1" : "Player 2"}
-          movesLeft={this.state.movesLeft}
+          player={this.state.whoseTurn === "player1" ? "Player 1" : "Player 2"}
+          dieRoll={this.state.dieRoll}
         />
         <Board 
           squares={this.state.squares}
@@ -179,3 +181,13 @@ ReactDOM.render(
   <Game />,
   document.getElementById('root')
 );
+
+function StatusBoard(props) {
+  let secondRollStatement = "";
+  if (props.dieRoll[1]) {
+    secondRollStatement = " and a " + props.dieRoll[1];
+  }
+  return (
+    <h3>{props.player} rolled a {props.dieRoll[0] + secondRollStatement} </h3>
+  );
+}
