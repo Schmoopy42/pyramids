@@ -109,6 +109,10 @@ class Game extends React.Component {
     this.state.pyramidsPickedUp.reverse().forEach((item, array) => {
       this.state.squares[y][x].push(item);
     });
+    // This has to be smarter when we actually check if the moves are possible
+    // remove move on die roll
+    this.state.dieRoll.pop();
+
     this.setState({
       pyramidsPickedUp: [],
     });
@@ -116,6 +120,7 @@ class Game extends React.Component {
 
   // pick up and move pieces
   handleClick(y, x) {
+
     if (this.state.firstClick) {
       // if the square is empty, do nothing because you can't pick up nothing
       if (this.state.squares[y][x].length === 0) {
@@ -146,6 +151,11 @@ class Game extends React.Component {
       },
       firstClick: false,
     });
+
+    // check if there are no moves left
+    if (this.state.dieRoll.length === 0){
+      this.endTurn();
+    }
   }
 
   endTurn(){
@@ -158,10 +168,12 @@ class Game extends React.Component {
     }
     this.setState({
       whoseTurn: nextPlayer,
+      dieRoll: this.rollPyramidDie(),
     });
   }
-
+  
   render() {
+
     return(
       <div>
         <StatusBoard 
@@ -188,6 +200,6 @@ function StatusBoard(props) {
     secondRollStatement = " and a " + props.dieRoll[1];
   }
   return (
-    <h3>{props.player} rolled a {props.dieRoll[0] + secondRollStatement} </h3>
+    <h3>{props.player} rolled a {props.dieRoll[0] + secondRollStatement}</h3>
   );
 }
